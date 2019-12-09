@@ -8,7 +8,7 @@ import struct
 import copy
 
 class serialPlot:
-    def __init__(self, serialPort='COM10', serialBaud=38400, plotLength=100, dataNumBytes=2, numPlots=1):
+    def __init__(self, serialPort='COM10', serialBaud=460800, plotLength=1000, dataNumBytes=4, numPlots=2):
         self.port = serialPort
         self.baud = serialBaud
         self.plotMaxLength = plotLength
@@ -23,7 +23,7 @@ class serialPlot:
         self.data = []
         self.privateData = None     # for storing a copy of the data so all plots are synchronized
         for i in range(numPlots):   # give an array for each type of data and store them in a list
-            self.data.append(collections.deque([0] * plotLength, maxlen=plotLength))
+            self.data.append(collections.deque([0]*plotLength, maxlen=plotLength))
         self.isRun = True
         self.isReceiving = False
         self.thread = None
@@ -59,7 +59,7 @@ class serialPlot:
         lineValueText.set_text('[' + lineLabel + '] = ' + str(value))
  
     def backgroundThread(self):    # retrieve data
-        time.sleep(1.0)  # give some buffer time for retrieving data
+        time.sleep(1)  # give some buffer time for retrieving data
         self.serialConnection.reset_input_buffer()
         while (self.isRun):
             self.serialConnection.readinto(self.rawData)
@@ -87,10 +87,10 @@ def makeFigure(xLimit, yLimit, title):
  
 if (__name__ == '__main__'):
     portName = 'COM10'
-    baudRate = 38400
-    maxPlotLength = 100     # number of points in x-axis of real time plot
+    baudRate = 460800
+    maxPlotLength = 200     # number of points in x-axis of real time plot
     dataNumBytes = 4        # number of bytes of 1 data point
-    numPlots = 2             # number of plots in 1 graph
+    numPlots = 2            # number of plots in 1 graph
     s = serialPlot(portName, baudRate, maxPlotLength, dataNumBytes, numPlots)   # initializes all required variables
     s.readSerialStart()                                               # starts background thread
  
@@ -99,7 +99,7 @@ if (__name__ == '__main__'):
     lineLabelText = ['EMG1', 'EMG2']
     title = ['Sensor sEMG 1', 'Sensor sEMG 2']
     xLimit = [(0, maxPlotLength), (0, maxPlotLength)]
-    yLimit = [(-200, 200), (-200,200)]
+    yLimit = [(0, 1024), (0,1024)]
     style = ['r-', 'g-', 'b-']    # linestyles for the different plots
     anim = []
     for i in range(numPlots):

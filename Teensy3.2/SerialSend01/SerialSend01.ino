@@ -4,18 +4,17 @@ int sensorPin01 = A1;
 int sensorPin02 = A2;
 
 void setup() {
-  Serial.begin(38400);
+  Serial.begin(460800);
   timer = micros();
 }
 
 void loop() {
   timeSync(loopTime);
   analogReadResolution(10);
-  float val01 = (analogRead(sensorPin01)-450)*330/1024.0;
-  float val02 = (analogRead(sensorPin02)-450)*330/1024.0;
-  //Serial.println(val01);
-  sendToPC(&val01,&val02);
-
+  float val01 = analogRead(sensorPin01);
+  float val02 = analogRead(sensorPin02);
+  Serial.println(val01);
+  //sendToPC(&val01,&val02);
 }
 
 void timeSync(unsigned long deltaT){
